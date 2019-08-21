@@ -2,6 +2,11 @@ function! gdb#remote#__notify(event, ...) abort
   if !exists('g:gdb#_job')
     throw 'GDB: job does not exist!'
   endif
+
+	if job_status(g:gdb#_job) != 'run'
+		throw 'GDB: job stopped running'
+	endif
+
   let arg_list = extend([a:event], a:000)
   call ch_sendexpr(g:gdb#_job, arg_list)
 endfun
