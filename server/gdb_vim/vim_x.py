@@ -31,8 +31,10 @@ class VimX:
 
         while True:
             s = self.ch_in.readline()
-            self.logger.info("read: %s", s)
+
             ind, obj = json.loads(s)
+            self.logger.info(" read: %6, %s", ind, str(obj))
+
             if (expect == 0 and ind < 0) or (expect < 0 and expect != ind):
                 raise ValueError('Incorrect index received! {} != {}', expect, ind)
             elif expect < 0 and ind > 0:
