@@ -22,8 +22,10 @@ def main():
 if __name__ == '__main__':
     handler = logging.FileHandler('/tmp/gdb.vim.log', 'w')
     handler.formatter = logging.Formatter(
-        '%(asctime)s [%(levelname)s @ '
-        '%(filename)s:%(funcName)s:%(lineno)s] - %(message)s')
+        '%(msecs)d %(levelname)-5s '
+        '%(filename)s %(funcName)-7s '
+        '%(message)s')
     logging.root.addHandler(handler)
     logging.root.setLevel(logging.DEBUG)
+
     main()
