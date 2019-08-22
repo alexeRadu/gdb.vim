@@ -4,9 +4,8 @@ from gdb_vim import Middleman
 import sys
 
 def main():
-    ch_in = sys.stdin
-    ch_out = sys.stdout
-    vimx = VimX(ch_in, ch_out)
+    vimx = VimX(sys.stdin, sys.stdout)
+
     try:
         print("Initializing...", file=sys.stderr)
 
