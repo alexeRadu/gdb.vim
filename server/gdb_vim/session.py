@@ -56,7 +56,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
         self.mode_teardown()
         self.internal['@mode'] = mode
-        self.vimx.command("call call(g:gdb#session#mode_setup, ['%s'])" % mode)
+        self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_setup, ['%s'])" % mode)
 
         if mode.startswith('debug'):
             self.ctrl.dbg_start()
@@ -68,7 +68,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
                 self.help_flags["launch_prompt"] and \
                 self.internal['@mode'] == 'debug':
             sleep(0.4)
-            if self.vimx.eval("input('Launch the target? [y=yes] ', 'y')") == 'y':
+            if self.vimx.send_cmd("expr", "input('Launch the target? [y=yes] ', 'y')") == 'y':
                 self.state['modes']['debug']['setup'].append('run')
                 self.ctrl.execute('run')
                 self.vimx.log('Process launched! Try `:GGsession show`', 0)
@@ -81,7 +81,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
             if 'teardown' in self.state['modes'][mode]:
                 self.run_actions(self.state['modes'][mode]['teardown'])
 
-            self.vimx.command("call call(g:gdb#session#mode_teardown, ['%s'])" % mode)
+            self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode)
 
             del self.internal['@mode']
 
@@ -148,11 +148,11 @@ class Session:  # pylint: disable=too-many-instance-attributes
         self.mode_setup(list(self.state["modes"].keys())[0])
 
     def handle_new(self):
-        if self.isalive() and self.vimx.eval("gdb#session#discard_prompt()") == 0:
+        if self.isalive() and self.vimx.send_cmd("expr", "gdb#session#discard_prompt()") == 0:
             self.vimx.log("Session left unchanged!", 0)
             return
 
-        ret = self.vimx.eval("gdb#session#new()")
+        ret = self.vimx.send_cmd("expr", "gdb#session#new()")
 
         if not ret or '_file' not in ret:
             self.vimx.log("Skipped -- no session was created!")
@@ -187,7 +187,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         self.vimx.log("New session created!", 0)
 
     def handle_load(self, confpath):
-        if self.isalive() and self.vimx.eval("gdb#session#discard_prompt()") == 0:
+        if self.isalive() and self.vimx.send_cmd("expr", "gdb#session#discard_prompt()") == 0:
             self.vimx.log("Session left unchanged!", 0)
             return
 
@@ -203,7 +203,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
     def handle_show(self):
         if self.isalive():
             sfile_bufnr = self.vimx.buffer_add(self.get_confpath())
-            self.vimx.command('exe "tab drop ".escape(bufname({0}), "$%# ")'
+            self.vimx.send_cmd("ex", 'exe "tab drop ".escape(bufname({0}), "$%# ")'
                               .format(sfile_bufnr))
 
             json_str = json.dumps(self.state, indent=4, separators=(',', ': '))
@@ -237,7 +237,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
         elif cmd == 'load':
             if len(args) == 0:
-                confpath = self.vimx.eval('findfile(g:gdb#session#file, ".;")')
+                confpath = self.vimx.send_cmd("expr", 'findfile(g:gdb#session#file, ".;")')
                 self.handle_load(confpath)
             elif len(args) == 1:
                 self.handle_load(args[0])
