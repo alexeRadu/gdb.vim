@@ -19,14 +19,17 @@ class Middleman:
     def loop(self):
         while True:
             rlist = [self.vimx.ch_in]
+
             if self.ctrl.dbg is not None:
                 rlist += self.ctrl.dbg.read_list
 
             ready, _, _ = select(rlist, [], [], 2)
+
             for ev in ready:
                 if ev == self.vimx.ch_in:
                     msg = self.vimx.wait()
                     self._handle(msg)
+
                 else:
                     self.dbg.poke()
 

@@ -26,6 +26,7 @@ class VimX:
         """
         if expect > 0:
             raise AssertionError('expect <= 0')
+
         if expect == 0 and len(self.buffer) > 0:
             return self.buffer.pop()
 
@@ -37,10 +38,13 @@ class VimX:
 
             if (expect == 0 and ind < 0) or (expect < 0 and expect != ind):
                 raise ValueError('Incorrect index received! {} != {}', expect, ind)
+
             elif expect < 0 and ind > 0:
                 self.buffer.insert(0, obj)
+
             else:
                 break
+
         return obj
 
     def write(self, obj):

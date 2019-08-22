@@ -9,6 +9,7 @@ def main():
     vimx = VimX(ch_in, ch_out)
     try:
         print("Initializing...", file=sys.stderr)
+
         sys.stderr.flush()
         Middleman(vimx).loop()
     except:

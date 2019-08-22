@@ -223,8 +223,10 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
     def handle(self, cmd, *args):
         """ Handler for :GGsession commands. """
+
         if cmd == 'new':
             self.handle_new()
+
         elif cmd == 'relod':
             if '@file' not in self.internal:
                 self.vimx.log("No active session!")
@@ -232,6 +234,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
                 self.vimx.log("Too many arguments!")
             else:
                 self.handle_load(self.get_confpath())
+
         elif cmd == 'load':
             if len(args) == 0:
                 confpath = self.vimx.eval('findfile(g:gdb#session#file, ".;")')
@@ -240,7 +243,9 @@ class Session:  # pylint: disable=too-many-instance-attributes
                 self.handle_load(args[0])
             else:
                 self.vimx.log("Too many arguments!")
+
         elif cmd == 'show':
             self.handle_show()
+
         else:
             self.vimx.log("Invalid sub-command: %s" % cmd)

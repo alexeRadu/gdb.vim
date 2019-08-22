@@ -71,7 +71,9 @@ function! gdb#session#new()
   if len(session_file) == 0
     return {}
   endif
+
   let target = input('Path to target executable: ', s:find_xfiles(), 'file')
+
   return { "_file": session_file,
          \ "target": target
          \ }
