@@ -49,17 +49,21 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
     def mode_setup(self, mode):
         """ Tear down the current mode, and switch to a new one. """
+
         if mode not in self.get_modes():
             self.vimx.log("Invalid mode!")
             return
+
         self.mode_teardown()
         self.internal['@mode'] = mode
         self.vimx.command("call call(g:gdb#session#mode_setup, ['%s'])" % mode)
+
         if mode.startswith('debug'):
             self.ctrl.dbg_start()
             if 'setup' in self.state['modes'][mode]:
                 self.run_actions(self.state['modes'][mode]['setup'])
             self.ctrl.update_buffers()
+
         if self.help_flags["new"] and \
                 self.help_flags["launch_prompt"] and \
                 self.internal['@mode'] == 'debug':
@@ -73,13 +77,19 @@ class Session:  # pylint: disable=too-many-instance-attributes
     def mode_teardown(self):
         if self.isalive():
             mode = self.internal['@mode']
+
             if 'teardown' in self.state['modes'][mode]:
                 self.run_actions(self.state['modes'][mode]['teardown'])
+
             self.vimx.command("call call(g:gdb#session#mode_teardown, ['%s'])" % mode)
+
             del self.internal['@mode']
+
             if mode.startswith('debug'):
                 self.ctrl.dbg_stop()
+
             return True
+
         return False
 
     def get_confpath(self):
@@ -93,20 +103,25 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
     def set_path(self, confpath):
         head, tail = path.split(path.abspath(confpath))
+
         if len(tail) == 0:
             self.vimx.log("Error: invalid path!")
             return False
+
         try:
             chdir(head)
         except OSError as e:
             self.vimx.log("%s" % e)
             return False
+
         self.internal["@dir"] = head
         self.internal["@file"] = tail
+
         return True
 
     def parse_and_load(self, conf_str):  # pylint: disable=too-many-branches
         state = self.json_decoder.decode(conf_str)
+
         if not isinstance(state, dict):
             raise ValueError("The root object must be an associative array")
 
@@ -138,9 +153,11 @@ class Session:  # pylint: disable=too-many-instance-attributes
             return
 
         ret = self.vimx.eval("gdb#session#new()")
+
         if not ret or '_file' not in ret:
             self.vimx.log("Skipped -- no session was created!")
             return
+
         if not self.set_path(ret["_file"]):
             return
 
@@ -162,6 +179,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         if 'target' in ret and len(ret['target']) > 0:
             self.state["variables"]["target"] = \
                 self.path_shorten(self.vimx.abspath(ret["target"]))
+
             debug = self.state["modes"]["debug"]
             debug["setup"].insert(0, "file {target}")
             self.help_flags["new"] = True

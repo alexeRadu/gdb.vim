@@ -96,6 +96,7 @@ function! gdb#layout#setup(mode)
   if a:mode != 'debug'
     return
   endif
+
   if !exists('s:buffer_map') || empty(s:buffer_map)
     call gdb#layout#init_buffers()
   endif

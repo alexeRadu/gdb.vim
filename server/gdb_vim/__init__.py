@@ -21,6 +21,7 @@ class Middleman:
             rlist = [self.vimx.ch_in]
             if self.ctrl.dbg is not None:
                 rlist += self.ctrl.dbg.read_list
+
             ready, _, _ = select(rlist, [], [], 2)
             for ev in ready:
                 if ev == self.vimx.ch_in:
@@ -32,27 +33,35 @@ class Middleman:
     def _handle(self, msg):
         head = msg[0]
         args = msg[1:]
+
         if head == 'session':
             self.ctrl.session.handle(*args)
+
         elif head == 'mode':
             assert(len(args) == 1)
             self.ctrl.session.mode_setup(args[0])
+
         elif head == 'exec':
             self.ctrl.execute(' '.join(args))
             if args[0] == 'help':
                 self.ctrl.vimx.command('drop [gdb]logs')
+
         elif head == 'stdin':
             assert(len(args) == 1)
             self.ctrl.put_stdin(args[0])
+
         elif head == 'exit':
             assert(len(args) == 0)
             self.ctrl.dbg_stop()
+
         elif head == 'breakswitch':
             bufnr, line = args
             self.ctrl.do_breakswitch(bufnr, line)
+
         elif head == 'breakdelete':
             assert(len(args) == 1)
             self.ctrl.do_breakdelete(bp_id)
+
         elif head == 'refresh':
             assert(len(args) == 0)
             self.ctrl.update_buffers()

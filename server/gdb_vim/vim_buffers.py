@@ -47,6 +47,7 @@ class VimBuffers:  # pylint: disable=too-many-instance-attributes
 
         if len(outstr) == 0:
             return 0
+
         lines = outstr.replace('\r\n', '\n').split('\n')
         if prefix is not None:
             last_line = lines[-1]

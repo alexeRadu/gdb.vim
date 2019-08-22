@@ -15,12 +15,14 @@ function! gdb#remote#init()
   if exists('g:gdb#_job') && job_status(g:gdb#_job) == 'run'
     throw 'GDB: job already running'
   endif
+
   let cmd = ['python3', g:gdb#_server]
   let g:gdb#_job = job_start(cmd, { 'in_mode': 'json',
                                   \ 'out_mode': 'json',
                                   \ 'err_mode': 'nl',
                                   \ 'err_io': 'buffer',
                                   \ 'err_name': '[gdb]logs'})
+
   au VimLeavePre * call gdb#remote#__notify('exit')
   call gdb#remote#define_commands()
 endfun
