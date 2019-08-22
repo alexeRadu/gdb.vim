@@ -20,7 +20,10 @@ if !exists('g:gdb#session#mode_teardown')
   let g:gdb#session#mode_teardown = 'gdb#layout#teardown'
 endif
 
-command! -nargs=+ -complete=customlist,gdb#session#complete GGsession call gdb#remote#init() | call gdb#remote#__notify("session", <f-args>)
+" GGsession - create a new session
+command! -nargs=+ -complete=customlist,gdb#session#complete
+			\	GGsession call gdb#remote#init() |
+								\	call gdb#remote#__notify("session", <f-args>)
 
 let s:bp_symbol = get(g:, 'gdb#sign#bp_symbol', 'B>')
 let s:pc_symbol = get(g:, 'gdb#sign#pc_symbol', '->')

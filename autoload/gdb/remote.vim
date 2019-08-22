@@ -62,19 +62,29 @@ function! gdb#remote#get_modes()
 endfun
 
 function! gdb#remote#define_commands()
-  command!           GGrefresh call gdb#remote#__notify("refresh")
 
-  command! -nargs=1       -complete=customlist,gdb#session#complete
-          \          GGmode    call gdb#remote#__notify("mode", <f-args>)
+	" GGrefresh
+  command! GGrefresh call gdb#remote#__notify("refresh")
 
-  command! -nargs=*  GG        call gdb#remote#__notify("exec", <f-args>)
-  command! -nargs=?       -complete=customlist,<SID>stdincompl
-          \          GGstdin   call gdb#remote#stdin_prompt(<f-args>)
-  command! -nargs=+       -complete=customlist,gdb#session#complete
-          \          GGsession call gdb#remote#__notify("session", <f-args>)
+	" GGmode
+  command! -nargs=1 -complete=customlist,gdb#session#complete
+				\	 GGmode		 call gdb#remote#__notify("mode", <f-args>)
+
+	" GG
+  command! -nargs=*
+				\	 GG				 call gdb#remote#__notify("exec", <f-args>)
+
+  " GGstdin
+  command! -nargs=? -complete=customlist,<SID>stdincompl
+				\	 GGstdin	 call gdb#remote#stdin_prompt(<f-args>)
+
+	" GGsession
+  command! -nargs=+ -complete=customlist,gdb#session#complete
+				\	 GGsession call gdb#remote#__notify("session", <f-args>)
 
   nnoremap <silent> <Plug>GGBreakSwitch
-          \ :call gdb#remote#__notify("breakswitch", bufnr("%"), getcurpos()[1])<CR>
+				\	:call gdb#remote#__notify("breakswitch", bufnr("%"), getcurpos()[1])<CR>
+
   vnoremap <silent> <Plug>GGStdInSelected
-          \ :<C-U>call gdb#remote#__notify("stdin", gdb#util#get_selection())<CR>
+				\	:<C-U>call gdb#remote#__notify("stdin", gdb#util#get_selection())<CR>
 endfun
