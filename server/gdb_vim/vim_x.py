@@ -27,7 +27,8 @@ class VimX:
         if expect > 0:
             raise AssertionError('expect <= 0')
         if expect == 0 and len(self.buffer) > 0:
-            return self.pop()
+            return self.buffer.pop()
+
         while True:
             s = self.ch_in.readline()
             self.logger.info("read: %s", s)
