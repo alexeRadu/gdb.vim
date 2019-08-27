@@ -63,8 +63,11 @@ class VimX:
 
         obj = [cmd, expr]
 
-        if args:
-            obj += args
+        if cmd == "call":
+            if not args:
+                args = []
+
+            obj += [args]
 
         if reply:
             self.counter -= 1
