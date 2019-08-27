@@ -83,7 +83,7 @@ class VimX:
         """ Execute echom in vim using appropriate highlighting. """
         level_map = ['None', 'WarningMsg', 'ErrorMsg']
         msg = msg.strip().replace('"', '\\"').replace('\n', '\\n')
-        self.send_cmd("ex", 'echohl {} | echom "{}" | echohl None'.format(level_map[level], msg))
+        self.send_cmd("ex", 'echohl {} | echom "{}" | echohl None'.format(level_map[level], msg), reply=False)
 
     def buffer_add(self, name):
         """ Create a buffer (if it doesn't exist) and return its number. """
@@ -105,7 +105,7 @@ class VimX:
 
     def sign_unplace(self, sign_id):
         """ Hide a sign with specified id. """
-        self.send_cmd("ex", "sign unplace {}".format(sign_id))
+        self.send_cmd("ex", "sign unplace {}".format(sign_id), reply=False)
 
     def get_buffer_name(self, nr): # FIXME?
         """ Get the buffer name given its number. """
