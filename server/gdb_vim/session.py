@@ -81,7 +81,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
             if 'teardown' in self.state['modes'][mode]:
                 self.run_actions(self.state['modes'][mode]['teardown'])
 
-            self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode)
+            self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode, reply=False)
 
             del self.internal['@mode']
 
