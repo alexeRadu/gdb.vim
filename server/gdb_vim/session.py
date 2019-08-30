@@ -75,22 +75,25 @@ class Session:  # pylint: disable=too-many-instance-attributes
             self.help_flags["launch_prompt"] = False
 
     def mode_teardown(self):
-        if self.isalive():
-            mode = self.internal['@mode']
 
-            if 'teardown' in self.state['modes'][mode]:
-                self.run_actions(self.state['modes'][mode]['teardown'])
+        if not self.isalive():
+            return False
 
-            self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode, reply=False)
+        mode = self.internal['@mode']
+        teardown = self.state['modes'][mode].get('teardown', None)
 
-            del self.internal['@mode']
+        if teardown:
+            self.run_actions(teardown)
 
-            if mode.startswith('debug'):
-                self.ctrl.dbg_stop()
+        self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode, reply=False)
 
-            return True
+        del self.internal['@mode']
 
-        return False
+        if mode.startswith('debug'):
+            self.ctrl.dbg_stop()
+
+        return True
+
 
     def get_confpath(self):
         if self.isalive():
