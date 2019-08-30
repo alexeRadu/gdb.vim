@@ -76,10 +76,10 @@ class VimX:
         self._send(obj)
 
         if reply:
-            self.logger.info("%-6s %4d %s", cmd, self.counter, str([expr, args]))
+            self.logger.info("%-6s %4d %s", cmd, self.counter, str(obj[1:-1]))
             return self.wait(expect=self.counter)
         else:
-            self.logger.info("%-6s      %s", cmd, str([expr, args]))
+            self.logger.info("%-6s      %s", cmd, str(obj[1:]))
 
 
     def log(self, msg, level=1):
