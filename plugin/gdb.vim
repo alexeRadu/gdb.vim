@@ -14,14 +14,6 @@ if !exists('g:gdb#session#file')
   let g:gdb#session#file = 'gdb-vim.json'
 endif
 
-if !exists('g:gdb#session#mode_setup')
-  let g:gdb#session#mode_setup = 'gdb#layout#setup'
-endif
-
-if !exists('g:gdb#session#mode_teardown')
-  let g:gdb#session#mode_teardown = 'gdb#layout#teardown'
-endif
-
 " GGsession - create a new session
 command! -nargs=+ -complete=customlist,gdb#session#complete
 			\	GGsession call gdb#remote#init() |

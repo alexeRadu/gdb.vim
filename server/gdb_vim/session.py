@@ -56,7 +56,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
 
         self.mode_teardown()
         self.internal['@mode'] = mode
-        self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_setup, ['%s'])" % mode, reply=False)
+        self.vimx.send_cmd("call", "gdb#layout#setup", mode, reply=False)
 
         if mode.startswith('debug'):
             self.ctrl.dbg_start()
@@ -85,7 +85,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         if teardown:
             self.run_actions(teardown)
 
-        self.vimx.send_cmd("ex", "call call(g:gdb#session#mode_teardown, ['%s'])" % mode, reply=False)
+        self.vimx.send_cmd("call", "gdb#layout#mode_teardown", mode, reply=False)
 
         del self.internal['@mode']
 
