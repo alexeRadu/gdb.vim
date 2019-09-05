@@ -32,7 +32,10 @@ class Session:  # pylint: disable=too-many-instance-attributes
     def format(self, s):
         return s.format(**self.state['variables'])
 
-    def run_actions(self, actions):  # pylint: disable=too-many-branches
+    def run_actions(self, actions):
+
+        if not actions:
+            return
 
         self.ctrl.busy_more()
         for action in actions:
@@ -65,8 +68,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         if name.startswith('debug'):
             self.ctrl.dbg_start()
 
-            if 'setup' in mode:
-                self.run_actions(mode['setup'])
+            self.run_actions(mode.get('setup', None))
 
             self.ctrl.update_buffers()
 
@@ -89,8 +91,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         mode = self.internal['@mode']
         teardown = self.state['modes'][mode].get('teardown', None)
 
-        if teardown:
-            self.run_actions(teardown)
+        self.run_actions(teardown)
 
         self.vimx.send_cmd("call", "gdb#layout#mode_teardown", mode, reply=False)
 
