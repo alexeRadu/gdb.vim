@@ -33,6 +33,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
         return s.format(**self.state['variables'])
 
     def run_actions(self, actions):  # pylint: disable=too-many-branches
+
         self.ctrl.busy_more()
         for action in actions:
             if isinstance(action, str):
@@ -41,37 +42,43 @@ class Session:  # pylint: disable=too-many-instance-attributes
                 self.logger.critical("Invalid action!")
         self.ctrl.busy_less()
 
-    def get_modes(self):
-        if 'modes' in self.state:
-            return self.state['modes'].keys()
-        else:
-            return []
+    def get_mode(self, name):
+        modes = self.state.get("modes", None)
 
-    def mode_setup(self, mode):
+        if not modes:
+            return None
+
+        return modes.get(name, None)
+
+    def mode_setup(self, name):
         """ Tear down the current mode, and switch to a new one. """
 
-        if mode not in self.get_modes():
+        mode = self.get_mode(name)
+        if not mode:
             self.vimx.log("Invalid mode!")
             return
 
         self.mode_teardown()
-        self.internal['@mode'] = mode
-        self.vimx.send_cmd("call", "gdb#layout#setup", mode, reply=False)
+        self.internal['@mode'] = name
+        self.vimx.send_cmd("call", "gdb#layout#setup", name, reply=False)
 
-        if mode.startswith('debug'):
+        if name.startswith('debug'):
             self.ctrl.dbg_start()
-            if 'setup' in self.state['modes'][mode]:
-                self.run_actions(self.state['modes'][mode]['setup'])
+
+            if 'setup' in mode:
+                self.run_actions(mode['setup'])
+
             self.ctrl.update_buffers()
 
-        if self.help_flags["new"] and \
-                self.help_flags["launch_prompt"] and \
-                self.internal['@mode'] == 'debug':
+        if self.help_flags["new"] and self.help_flags["launch_prompt"] and name == 'debug':
+
             sleep(0.4)
+
             if self.vimx.send_cmd("expr", "input('Launch the target? [y=yes] ', 'y')") == 'y':
-                self.state['modes']['debug']['setup'].append('run')
+                self.state['mmodes']['debug']['setup'].append('run')
                 self.ctrl.execute('run')
                 self.vimx.log('Process launched! Try `:GGsession show`', 0)
+
             self.help_flags["launch_prompt"] = False
 
     def mode_teardown(self):
