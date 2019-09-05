@@ -54,18 +54,28 @@ endfun
 function! gdb#layout#init_buffers()
   let s:buffers = [ 'backtrace', 'breakpoints', 'disassembly',
                   \ 'locals', 'logs', 'registers', 'threads' ]
+
   let s:buffer_map = {}
+
+	" remember the current buffer number to return to it after createing all the
+	" debugging buffers
   let u_bnr = bufnr('%')
+
   for bname in s:buffers
     let bnr = bufnr('[gdb]' . bname, 1)
+
     call setbufvar(bnr, '&ft', 'gdb')
     call setbufvar(bnr, '&bt', 'nofile')
     call setbufvar(bnr, '&swf', 0)
     call setbufvar(bnr, '&ma', 0)
     "call setbufvar(bnr, '&bl', 0)
+
     let s:buffer_map[bname] = bnr
   endfor
+
+	" display the buffer that was previously displayed
   exe 'silent b ' . u_bnr
+
   return s:buffer_map
 endfun
 
@@ -100,6 +110,8 @@ function! gdb#layout#setup(mode)
   if !exists('s:buffer_map') || empty(s:buffer_map)
     call gdb#layout#init_buffers()
   endif
+
+	" Tab 2
   0tab sp
   let winw2 = winwidth(0)*2/5
   let winw3 = winwidth(0)*3/5
@@ -108,6 +120,8 @@ function! gdb#layout#setup(mode)
   call gdb#layout#init_window(winh2, 'sp', s:buffer_map['disassembly'])
   call gdb#layout#init_window(winw3/2, 'vsp', s:buffer_map['registers'])
   2wincmd h
+
+	" Tab 1
   0tab sp
   call gdb#layout#init_window(winw2, 'vsp', s:buffer_map['backtrace'])
   call gdb#layout#init_window(winh2, 'sp', s:buffer_map['breakpoints'])
