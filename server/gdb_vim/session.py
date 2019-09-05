@@ -75,7 +75,7 @@ class Session:  # pylint: disable=too-many-instance-attributes
             sleep(0.4)
 
             if self.vimx.send_cmd("expr", "input('Launch the target? [y=yes] ', 'y')") == 'y':
-                self.state['mmodes']['debug']['setup'].append('run')
+                self.state['modes']['debug']['setup'].append('run')
                 self.ctrl.execute('run')
                 self.vimx.log('Process launched! Try `:GGsession show`', 0)
 
