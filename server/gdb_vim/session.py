@@ -88,12 +88,11 @@ class Session:  # pylint: disable=too-many-instance-attributes
         if not self.isalive():
             return False
 
-        mode = self.internal['@mode']
-        teardown = self.state['modes'][mode].get('teardown', None)
+        mode = self.get_mode(self.internal['@mode'])
 
-        self.run_actions(teardown)
+        self.run_actions(mode.get('teardown', None))
 
-        self.vimx.send_cmd("call", "gdb#layout#mode_teardown", mode, reply=False)
+        self.vimx.send_cmd("call", "gdb#layout#mode_teardown", self.internal['@mode'], reply=False)
 
         del self.internal['@mode']
 
